@@ -1,0 +1,1732 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Bibliothèque Yasmin — قصص PDF</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;600;700&family=Parisienne&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg0:#07040a;
+      --bg1:#120617;
+
+      --glass:rgba(255,255,255,.08);
+      --glass2:rgba(255,255,255,.12);
+      --stroke:rgba(255,255,255,.14);
+
+      --text:#fff6fb;
+      --muted:rgba(255,246,251,.72);
+
+      --rose0:#ff2fb2;
+      --rose1:#ff5ad1;
+      --rose2:#ff8be3;
+      --rose3:#ffd0f2;
+
+      --shadow: 0 22px 80px rgba(0,0,0,.60);
+      --r:22px;
+      --a: cubic-bezier(.2,.8,.2,1);
+    }
+
+    /* ===== Light mode overrides ===== */
+    body.light{
+      --bg0:#fff7fb;
+      --bg1:#ffe3f3;
+      --glass:rgba(0,0,0,.04);
+      --glass2:rgba(0,0,0,.06);
+      --stroke:rgba(0,0,0,.10);
+
+      --text:#2b1020;
+      --muted:rgba(43,16,32,.70);
+
+      --shadow: 0 22px 80px rgba(40,10,26,.14);
+    }
+
+    /* ===== Reading comfort mode (eye friendly) ===== */
+    body.reading{
+      overflow:hidden; /* stop background scroll while modal open */
+    }
+    body.reading .glitter,
+    body.reading .petals{
+      display:none !important; /* less distraction */
+    }
+    body.reading header{
+      filter:saturate(.95);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      color:var(--text);
+      font-family: "Alexandria", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(1200px 800px at 15% 10%, rgba(255,47,178,.22), transparent 60%),
+        radial-gradient(1100px 760px at 85% 18%, rgba(255,90,209,.16), transparent 62%),
+        radial-gradient(1200px 860px at 55% 90%, rgba(255,139,227,.12), transparent 62%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      overflow-x:hidden;
+    }
+
+    /* ===== glitter ===== */
+    .glitter{
+      position:fixed; inset:-40px;
+      background:
+        radial-gradient(2px 2px at 10% 20%, rgba(255,255,255,.50), transparent 60%),
+        radial-gradient(2px 2px at 25% 70%, rgba(255,255,255,.40), transparent 60%),
+        radial-gradient(2px 2px at 55% 40%, rgba(255,255,255,.35), transparent 60%),
+        radial-gradient(2px 2px at 75% 18%, rgba(255,255,255,.35), transparent 60%),
+        radial-gradient(2px 2px at 80% 72%, rgba(255,255,255,.35), transparent 60%),
+        radial-gradient(2px 2px at 35% 35%, rgba(255,255,255,.35), transparent 60%);
+      opacity:.32;
+      pointer-events:none;
+      z-index:0;
+      animation: twinkle 6s var(--a) infinite;
+    }
+    body.light .glitter{opacity:.18}
+    @keyframes twinkle{
+      0%,100%{ transform: translate3d(0,0,0); opacity:.24; }
+      50%{ transform: translate3d(0,-10px,0); opacity:.42; }
+    }
+
+    /* ===== petals ===== */
+    .petals{
+      position:fixed; inset:0;
+      pointer-events:none;
+      z-index:0;
+      overflow:hidden;
+      filter: drop-shadow(0 8px 18px rgba(255,47,178,.18));
+    }
+    .petal{
+      position:absolute;
+      width:18px; height:26px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,208,242,.92), rgba(255,90,209,.55) 55%, rgba(255,47,178,.25));
+      border:1px solid rgba(255,255,255,.18);
+      border-radius: 70% 70% 70% 70% / 90% 90% 55% 55%;
+      opacity:.7;
+      transform: translate3d(0,0,0) rotate(0deg);
+      animation: fall linear infinite;
+    }
+    body.light .petal{
+      border-color: rgba(0,0,0,.10);
+      opacity:.55;
+    }
+    .petal:after{
+      content:"";
+      position:absolute; inset:4px 6px 6px 4px;
+      border-radius: inherit;
+      background: rgba(255,255,255,.10);
+      filter: blur(.4px);
+    }
+    @keyframes fall{
+      from{ transform: translate3d(var(--x,0), -12vh, 0) rotate(0deg); }
+      to  { transform: translate3d(calc(var(--x,0) + 30px), 112vh, 0) rotate(240deg); }
+    }
+
+    header{
+      position:sticky; top:0; z-index:50;
+      padding:14px 0 12px;
+      backdrop-filter: blur(14px);
+      background: linear-gradient(180deg, rgba(7,4,10,.88), rgba(7,4,10,.52));
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    body.light header{
+      background: linear-gradient(180deg, rgba(255,247,251,.92), rgba(255,227,243,.65));
+      border-bottom:1px solid rgba(0,0,0,.08);
+    }
+
+    .bar{
+      max-width:1180px;
+      margin:0 auto;
+      padding:0 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .brand{
+      display:flex; align-items:center; gap:12px;
+      min-width: 240px;
+    }
+    .mark{
+      width:50px;height:50px;
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255,208,242,.92), rgba(255,90,209,.58) 55%, rgba(255,47,178,.28));
+      box-shadow:
+        0 18px 45px rgba(255,47,178,.20),
+        inset 0 0 0 1px rgba(255,255,255,.16);
+      position:relative;
+      overflow:hidden;
+      flex:0 0 auto;
+    }
+    body.light .mark{box-shadow: 0 16px 40px rgba(255,47,178,.16), inset 0 0 0 1px rgba(0,0,0,.10)}
+    .mark:before{
+      content:"";
+      position:absolute; inset:-30px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.35), transparent 55%);
+      transform: rotate(20deg);
+    }
+
+    .t1{
+      margin:0;
+      font-family:"Parisienne", cursive;
+      font-size: 30px;
+      line-height:1;
+      background: linear-gradient(90deg, var(--rose3), var(--rose1), var(--rose0));
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      text-shadow: 0 12px 30px rgba(255,47,178,.18);
+    }
+    .t2{
+      margin:3px 0 0;
+      font-size:12px;
+      color:var(--muted);
+      letter-spacing:.2px;
+    }
+
+    .headerRight{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      max-width: 100%;
+    }
+
+    .miniBadge{
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.18);
+      color:rgba(255,246,251,.78);
+      font-size:12px;
+      white-space:nowrap;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+    }
+    body.light .miniBadge{
+      border-color: rgba(0,0,0,.10);
+      background: rgba(255,255,255,.55);
+      color: rgba(43,16,32,.84);
+    }
+    .miniBadge.rose{
+      background: linear-gradient(180deg, rgba(255,47,178,.22), rgba(0,0,0,.18));
+      color: var(--text);
+      box-shadow: 0 18px 45px rgba(255,47,178,.12), inset 0 1px 0 rgba(255,255,255,.10);
+    }
+    body.light .miniBadge.rose{
+      background: linear-gradient(180deg, rgba(255,47,178,.18), rgba(255,255,255,.55));
+      color: rgba(43,16,32,.92);
+      box-shadow: 0 16px 40px rgba(255,47,178,.12), inset 0 1px 0 rgba(255,255,255,.45);
+    }
+
+    .langWrap{
+      display:flex;
+      gap:6px;
+      align-items:center;
+      padding:6px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+    }
+    body.light .langWrap{
+      border-color: rgba(0,0,0,.10);
+      background: rgba(255,255,255,.45);
+    }
+    .langBtn{
+      cursor:pointer;
+      border:1px solid transparent;
+      background: transparent;
+      color: rgba(255,246,251,.75);
+      border-radius:999px;
+      padding:8px 10px;
+      font-size:12px;
+      transition: transform .15s var(--a), background .15s var(--a), border-color .15s var(--a), box-shadow .15s var(--a);
+      user-select:none;
+      min-height: 36px;
+      min-width: 42px;
+    }
+    body.light .langBtn{color: rgba(43,16,32,.75)}
+    .langBtn:hover{transform: translateY(-1px)}
+    .langBtn.active{
+      color: var(--text);
+      border-color: rgba(255,255,255,.16);
+      background: linear-gradient(180deg, rgba(255,47,178,.22), rgba(0,0,0,.18));
+      box-shadow: 0 18px 45px rgba(255,47,178,.12);
+    }
+    body.light .langBtn.active{
+      color: rgba(43,16,32,.92);
+      border-color: rgba(0,0,0,.10);
+      background: linear-gradient(180deg, rgba(255,47,178,.18), rgba(255,255,255,.55));
+      box-shadow: 0 16px 40px rgba(255,47,178,.12);
+    }
+
+    .toolBtn{
+      cursor:pointer;
+      border-radius:999px;
+      padding:8px 12px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.18);
+      color: var(--text);
+      font-size:12px;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      transition: transform .15s var(--a), box-shadow .15s var(--a);
+      min-height: 36px;
+      user-select:none;
+      white-space:nowrap;
+    }
+    body.light .toolBtn{
+      border-color: rgba(0,0,0,.10);
+      background: rgba(255,255,255,.55);
+      color: rgba(43,16,32,.92);
+    }
+    .toolBtn:hover{transform: translateY(-1px)}
+    .toolBtn.active{
+      background: linear-gradient(180deg, rgba(255,47,178,.22), rgba(0,0,0,.18));
+      border-color: rgba(255,255,255,.18);
+      box-shadow: 0 18px 45px rgba(255,47,178,.12);
+    }
+    body.light .toolBtn.active{
+      background: linear-gradient(180deg, rgba(255,47,178,.18), rgba(255,255,255,.55));
+      border-color: rgba(0,0,0,.10);
+      box-shadow: 0 16px 40px rgba(255,47,178,.12);
+    }
+
+    .topPhoto{
+      width:44px;
+      height:44px;
+      border-radius: 18px;
+      object-fit:cover;
+      border:1px solid rgba(255,255,255,.16);
+      box-shadow: 0 18px 45px rgba(255,47,178,.18);
+      background: rgba(0,0,0,.18);
+      flex:0 0 auto;
+    }
+    body.light .topPhoto{
+      border-color: rgba(0,0,0,.10);
+      box-shadow: 0 16px 40px rgba(255,47,178,.12);
+      background: rgba(255,255,255,.55);
+    }
+
+    .wrap{
+      position:relative;
+      z-index:1;
+      max-width:1180px;
+      margin:0 auto;
+      padding:22px 18px 70px;
+    }
+
+    .hero{
+      border-radius: var(--r);
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+      padding:18px;
+    }
+    body.light .hero{
+      border-color: rgba(0,0,0,.10);
+      background: linear-gradient(180deg, rgba(255,255,255,.78), rgba(255,255,255,.42));
+    }
+    .hero:before{
+      content:"";
+      position:absolute; inset:-2px;
+      background:
+        radial-gradient(680px 340px at 20% 10%, rgba(255,47,178,.18), transparent 60%),
+        radial-gradient(700px 380px at 90% 40%, rgba(255,139,227,.14), transparent 62%),
+        radial-gradient(440px 280px at 60% 110%, rgba(255,208,242,.10), transparent 62%);
+      pointer-events:none;
+    }
+    .hero > *{position:relative}
+
+    .heroGrid{
+      display:grid;
+      grid-template-columns: 1.35fr .65fr;
+      gap:14px;
+      align-items:stretch;
+    }
+    @media (max-width: 980px){ .heroGrid{grid-template-columns:1fr} }
+
+    .heroTitle{
+      margin:0;
+      font-size:26px;
+      line-height:1.35;
+      letter-spacing:.2px;
+    }
+    .heroTitle span{
+      font-family:"Parisienne", cursive;
+      font-size: 36px;
+      background: linear-gradient(90deg, var(--rose3), var(--rose1), var(--rose0));
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+    }
+    .heroSub{
+      margin:10px 0 0;
+      color:var(--muted);
+      line-height:1.75;
+      font-size:13px;
+      max-width: 70ch;
+    }
+
+    .yasminCard{
+      border-radius: 20px;
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(255,47,178,.20), rgba(255,255,255,.05));
+      box-shadow: 0 22px 70px rgba(255,47,178,.12);
+      padding:14px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      min-height: 170px;
+    }
+    body.light .yasminCard{
+      border-color: rgba(0,0,0,.10);
+      background: linear-gradient(180deg, rgba(255,47,178,.12), rgba(255,255,255,.55));
+      box-shadow: 0 18px 60px rgba(255,47,178,.12);
+    }
+
+    .yasTop{
+      display:flex; gap:12px; align-items:center;
+    }
+    .avatar{
+      width:54px;height:54px;border-radius: 20px;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255,208,242,.9), rgba(255,90,209,.55) 55%, rgba(255,47,178,.24));
+      border:1px solid rgba(255,255,255,.16);
+      box-shadow: 0 18px 40px rgba(255,47,178,.16);
+      position:relative;
+      overflow:hidden;
+      flex:0 0 auto;
+    }
+    body.light .avatar{
+      border-color: rgba(0,0,0,.10);
+      box-shadow: 0 16px 36px rgba(255,47,178,.12);
+    }
+    .avatar:after{
+      content:"Y";
+      position:absolute; inset:0;
+      display:grid; place-items:center;
+      font-weight:700;
+      letter-spacing:.6px;
+      color:rgba(255,246,251,.92);
+      text-shadow: 0 10px 24px rgba(0,0,0,.35);
+    }
+    body.light .avatar:after{color: rgba(43,16,32,.90); text-shadow:none}
+    .yasText{min-width:0}
+    .yasName{
+      margin:0;
+      font-size:15px;
+      line-height:1.25;
+    }
+    .yasBio{
+      margin:4px 0 0;
+      font-size:12px;
+      color:rgba(255,246,251,.76);
+      line-height:1.6;
+    }
+    body.light .yasBio{color: rgba(43,16,32,.72)}
+    .yasLine{
+      font-size:12px;
+      color:rgba(255,246,251,.78);
+      background: rgba(0,0,0,.18);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 14px;
+      padding:10px 10px;
+      line-height:1.6;
+    }
+    body.light .yasLine{
+      color: rgba(43,16,32,.78);
+      background: rgba(255,255,255,.55);
+      border-color: rgba(0,0,0,.10);
+    }
+
+    /* search + quote row */
+    .searchRow{
+      margin-top: 14px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .searchBox{
+      flex: 1 1 260px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 14px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.14);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.10);
+    }
+    body.light .searchBox{
+      border-color: rgba(0,0,0,.10);
+      background: rgba(255,255,255,.55);
+      box-shadow: inset 0 1px 0 rgba(0,0,0,.06);
+    }
+    .searchBox span{opacity:.85}
+    .searchBox input{
+      width:100%;
+      border:0;
+      outline:none;
+      background: transparent;
+      color: var(--text);
+      font-size:13px;
+    }
+    body.light .searchBox input{color: rgba(43,16,32,.92)}
+    .searchBox input::placeholder{color: rgba(255,246,251,.55)}
+    body.light .searchBox input::placeholder{color: rgba(43,16,32,.55)}
+
+    .quoteBox{
+      margin-top:12px;
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.14);
+      padding:12px;
+      color: rgba(255,246,251,.86);
+      line-height:1.7;
+      font-size:13px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+    }
+    body.light .quoteBox{
+      border-color: rgba(0,0,0,.10);
+      background: rgba(255,255,255,.55);
+      color: rgba(43,16,32,.86);
+    }
+    .quoteBox button{
+      flex:0 0 auto;
+      border-radius: 14px;
+      padding:10px 12px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.18);
+      color: var(--text);
+      cursor:pointer;
+      transition: transform .15s var(--a);
+      min-height: 40px;
+    }
+    body.light .quoteBox button{
+      border-color: rgba(0,0,0,.10);
+      background: rgba(255,255,255,.65);
+      color: rgba(43,16,32,.92);
+    }
+    .quoteBox button:hover{transform: translateY(-1px)}
+
+    /* ===== cards ===== */
+    .grid{
+      margin-top: 16px;
+      display:grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap:14px;
+    }
+    @media (max-width: 820px){ .grid{grid-template-columns: 1fr} }
+
+    .card{
+      position:relative;
+      border-radius: 22px;
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
+      box-shadow: 0 22px 85px rgba(0,0,0,.58);
+      overflow:hidden;
+      cursor:default;
+      isolation:isolate;
+      transition: transform .18s var(--a), box-shadow .18s var(--a), border-color .18s var(--a), filter .18s var(--a);
+    }
+    body.light .card{
+      border-color: rgba(0,0,0,.10);
+      background: linear-gradient(180deg, rgba(255,255,255,.78), rgba(255,255,255,.42));
+      box-shadow: 0 18px 60px rgba(40,10,26,.18);
+    }
+    .card:hover{
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,.18);
+      box-shadow: 0 28px 95px rgba(0,0,0,.64);
+      filter: saturate(1.03);
+    }
+    body.light .card:hover{
+      border-color: rgba(0,0,0,.12);
+      box-shadow: 0 22px 70px rgba(40,10,26,.22);
+    }
+    .card:before{
+      content:"";
+      position:absolute; inset:-2px;
+      background:
+        radial-gradient(380px 260px at 15% 10%, rgba(255,47,178,.22), transparent 58%),
+        radial-gradient(460px 300px at 95% 40%, rgba(255,139,227,.14), transparent 62%),
+        radial-gradient(280px 200px at 40% 120%, rgba(255,208,242,.10), transparent 62%);
+      pointer-events:none;
+      z-index:0;
+    }
+
+    .cardInner{
+      position:relative;
+      z-index:1;
+      padding:14px;
+      display:grid;
+      grid-template-columns: 170px 1fr;
+      gap:14px;
+      align-items:stretch;
+    }
+    @media (max-width: 540px){
+      .cardInner{grid-template-columns: 1fr; }
+    }
+
+    .imgBox{
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.18);
+      overflow:hidden;
+      position:relative;
+      min-height: 150px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.10);
+    }
+    body.light .imgBox{
+      border-color: rgba(0,0,0,.10);
+      background: rgba(255,255,255,.55);
+      box-shadow: inset 0 1px 0 rgba(0,0,0,.06);
+    }
+    .imgBox img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+      filter: saturate(1.15) contrast(1.05);
+      transform: scale(1.02);
+    }
+    .imgPh{
+      position:absolute; inset:0;
+      display:grid;
+      place-items:center;
+      text-align:center;
+      padding:12px;
+      color:rgba(255,246,251,.72);
+      font-size:12px;
+      line-height:1.6;
+    }
+    body.light .imgPh{color: rgba(43,16,32,.70)}
+    .imgPh b{
+      color:rgba(255,246,251,.92);
+      font-weight:700;
+    }
+    body.light .imgPh b{color: rgba(43,16,32,.90)}
+
+    .info{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      min-width:0;
+    }
+
+    .titleInput{
+      width:100%;
+      padding:12px 12px;
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.18);
+      color:var(--text);
+      outline:none;
+      font-size:13px;
+      transition: box-shadow .15s var(--a), border-color .15s var(--a);
+    }
+    body.light .titleInput{
+      border-color: rgba(0,0,0,.10);
+      background: rgba(255,255,255,.55);
+      color: rgba(43,16,32,.92);
+    }
+    .titleInput::placeholder{color:rgba(255,246,251,.55)}
+    body.light .titleInput::placeholder{color: rgba(43,16,32,.55)}
+    .titleInput:focus{
+      border-color: rgba(255,90,209,.35);
+      box-shadow: 0 0 0 3px rgba(255,90,209,.18);
+    }
+
+    .desc{
+      margin:0;
+      color:rgba(255,246,251,.78);
+      font-size:12.5px;
+      line-height:1.7;
+      padding:12px;
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.14);
+    }
+    body.light .desc{
+      border-color: rgba(0,0,0,.10);
+      background: rgba(255,255,255,.45);
+      color: rgba(43,16,32,.74);
+    }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:flex-start;
+      margin-top:auto;
+    }
+
+    .btn{
+      cursor:pointer;
+      border:0;
+      padding:11px 14px;
+      border-radius:999px;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255,208,242,.55), rgba(255,90,209,.28) 55%, rgba(255,47,178,.14));
+      box-shadow: 0 20px 55px rgba(255,47,178,.14), inset 0 0 0 1px rgba(255,255,255,.16);
+      transition: transform .15s var(--a), filter .15s var(--a), box-shadow .15s var(--a);
+      font-size:12px;
+      letter-spacing:.2px;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      min-height: 44px;
+      padding-inline: 16px;
+    }
+    body.light .btn{
+      box-shadow: 0 16px 40px rgba(255,47,178,.12), inset 0 0 0 1px rgba(0,0,0,.06);
+      color: rgba(43,16,32,.92);
+    }
+    .btn:hover{transform: translateY(-1px); filter: brightness(1.07)}
+    .btn:active{transform: translateY(0); filter: brightness(.98)}
+    .btn:focus-visible{
+      outline:none;
+      box-shadow: 0 0 0 3px rgba(255,90,209,.22), 0 20px 55px rgba(255,47,178,.14);
+    }
+
+    .btn2{
+      cursor:pointer;
+      padding:11px 14px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.18);
+      color:var(--text);
+      font-size:12px;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      transition: transform .15s var(--a), box-shadow .15s var(--a);
+      min-height: 44px;
+      padding-inline: 16px;
+    }
+    body.light .btn2{
+      border-color: rgba(0,0,0,.10);
+      background: rgba(255,255,255,.55);
+      color: rgba(43,16,32,.92);
+    }
+    .btn2:hover{transform: translateY(-1px)}
+    .btn2:focus-visible{
+      outline:none;
+      box-shadow: 0 0 0 3px rgba(255,90,209,.18);
+    }
+
+    .heartBtn{
+      cursor:pointer;
+      border-radius: 999px;
+      padding:10px 12px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.18);
+      color: var(--text);
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      min-height: 44px;
+      transition: transform .15s var(--a), box-shadow .15s var(--a);
+      user-select:none;
+    }
+    body.light .heartBtn{
+      border-color: rgba(0,0,0,.10);
+      background: rgba(255,255,255,.55);
+      color: rgba(43,16,32,.92);
+    }
+    .heartBtn:hover{transform: translateY(-1px)}
+    .heartBtn.active{
+      background: linear-gradient(180deg, rgba(255,47,178,.22), rgba(0,0,0,.18));
+      box-shadow: 0 18px 45px rgba(255,47,178,.12);
+      border-color: rgba(255,255,255,.18);
+    }
+    body.light .heartBtn.active{
+      background: linear-gradient(180deg, rgba(255,47,178,.18), rgba(255,255,255,.55));
+      box-shadow: 0 16px 40px rgba(255,47,178,.12);
+      border-color: rgba(0,0,0,.10);
+    }
+
+    .note{
+      margin-top: 12px;
+      font-size:12px;
+      color:rgba(255,246,251,.65);
+      text-align:center;
+      padding:10px 12px;
+      border-radius: 18px;
+      border:1px dashed rgba(255,255,255,.16);
+      background: rgba(0,0,0,.10);
+    }
+    body.light .note{
+      border-color: rgba(0,0,0,.12);
+      background: rgba(255,255,255,.45);
+      color: rgba(43,16,32,.70);
+    }
+
+    .empty{
+      margin-top:14px;
+      padding:14px;
+      border-radius: 18px;
+      border:1px dashed rgba(255,255,255,.16);
+      background: rgba(0,0,0,.10);
+      color: rgba(255,246,251,.70);
+      display:none;
+      text-align:center;
+    }
+    body.light .empty{
+      border-color: rgba(0,0,0,.12);
+      background: rgba(255,255,255,.45);
+      color: rgba(43,16,32,.72);
+    }
+
+    /* ===== Reading Mode Modal (PDF inside site) ===== */
+    .back{
+      position:fixed; inset:0;
+      display:none;
+      align-items:center; justify-content:center;
+      padding:14px;
+      background: rgba(0,0,0,.66);
+      z-index:200;
+    }
+    body.light .back{background: rgba(30,10,20,.45)}
+    .modal{
+      width: min(1040px, 100%);
+      max-height: min(90vh, 1020px);
+      overflow:hidden;
+      border-radius: 26px;
+      border:1px solid rgba(255,255,255,.14);
+      background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
+      box-shadow: 0 35px 120px rgba(0,0,0,.72);
+      display:flex;
+      flex-direction:column;
+    }
+    body.light .modal{
+      border-color: rgba(0,0,0,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.90), rgba(255,255,255,.65));
+      box-shadow: 0 26px 90px rgba(40,10,26,.24);
+    }
+    .modalHead{
+      padding:12px 14px;
+      backdrop-filter: blur(12px);
+      background: linear-gradient(180deg, rgba(7,4,10,.92), rgba(7,4,10,.55));
+      border-bottom:1px solid rgba(255,255,255,.08);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    body.light .modalHead{
+      background: linear-gradient(180deg, rgba(255,247,251,.92), rgba(255,227,243,.65));
+      border-bottom:1px solid rgba(0,0,0,.10);
+    }
+    .mTitle{
+      margin:0;
+      font-size:14px;
+      color: rgba(255,246,251,.92);
+      flex:1 1 auto;
+      min-width: 220px;
+      line-height:1.6;
+    }
+    body.light .mTitle{color: rgba(43,16,32,.92)}
+    .modalActions{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .mBtn{
+      cursor:pointer;
+      border-radius: 14px;
+      padding:10px 12px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.18);
+      color: var(--text);
+      transition: transform .15s var(--a);
+      min-height: 40px;
+      white-space:nowrap;
+    }
+    body.light .mBtn{
+      border-color: rgba(0,0,0,.10);
+      background: rgba(255,255,255,.70);
+      color: rgba(43,16,32,.92);
+    }
+    .mBtn:hover{transform: translateY(-1px)}
+    .mBtn.heart.active{
+      background: linear-gradient(180deg, rgba(255,47,178,.22), rgba(0,0,0,.18));
+    }
+    body.light .mBtn.heart.active{
+      background: linear-gradient(180deg, rgba(255,47,178,.18), rgba(255,255,255,.70));
+    }
+
+    .modalBody{
+      display:grid;
+      grid-template-columns: 1fr 320px;
+      gap:12px;
+      padding:12px;
+      overflow:auto;
+    }
+    @media (max-width: 860px){
+      .sidePanel{display:none;}
+      .modalBody{grid-template-columns: 1fr}
+    }
+
+    /* Eye-friendly frame: soften background + rounded */
+    .pdfFrame{
+      font-size: 18px;
+      width:100%;
+      height: min(72vh, 820px);
+      border-radius: 20px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.16);
+      overflow:hidden;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+    }
+    body.light .pdfFrame{
+      font-size: 18px;
+      border-color: rgba(0,0,0,.10);
+      background: rgba(255,255,255,.70);
+      box-shadow: inset 0 1px 0 rgba(0,0,0,.05);
+    }
+    .pdfFrame iframe{
+      width:100%;
+      height:100%;
+      border:0;
+      display:block;
+      background: transparent;
+    }
+
+    .sidePanel{
+      border-radius: 20px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.14);
+      padding:12px;
+      height: fit-content;
+    }
+    body.light .sidePanel{
+      border-color: rgba(0,0,0,.10);
+      background: rgba(255,255,255,.70);
+    }
+    .sidePanel h3{
+      margin:0 0 10px;
+      font-size:13px;
+    }
+    .notes{
+      width:100%;
+      min-height: 170px;
+      resize: vertical;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.18);
+      color: var(--text);
+      padding:10px;
+      outline:none;
+      line-height:1.7;
+      font-size:13px;
+    }
+    body.light .notes{
+      border-color: rgba(0,0,0,.10);
+      background: rgba(255,255,255,.85);
+      color: rgba(43,16,32,.92);
+    }
+
+    .tiny{
+      margin-top:10px;
+      font-size:12px;
+      color: rgba(255,246,251,.70);
+      line-height:1.6;
+    }
+    body.light .tiny{color: rgba(43,16,32,.70)}
+
+    /* ===== Mobile improvements ===== */
+    @media (max-width: 560px){
+      header{padding:10px 0}
+      .bar{padding:0 12px; gap:10px}
+      .t1{font-size:26px}
+      .wrap{padding:16px 12px 60px}
+      .hero{padding:14px}
+      .heroTitle{font-size:22px}
+      .heroTitle span{font-size:32px}
+
+      .headerRight{
+        width:100%;
+        justify-content:space-between;
+        gap:8px;
+        overflow-x:auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding-bottom: 4px;
+      }
+      .headerRight::-webkit-scrollbar{display:none}
+
+      .miniBadge{padding:7px 10px; font-size:11px}
+      .langBtn{padding:7px 9px; font-size:11px; min-height: 34px}
+      .toolBtn{padding:7px 10px; font-size:11px; min-height: 34px}
+      .topPhoto{width:42px;height:42px}
+
+      .cardInner{padding:12px}
+      .imgBox{min-height: 170px}
+      .titleInput{font-size:14px; padding:13px 12px}
+      .desc{font-size:13px}
+      .btn, .btn2, .heartBtn{width:100%; justify-content:center}
+      .modalBody{padding:10px}
+      .pdfFrame{
+      font-size: 18px;height: 66vh}
+    }
+
+    .fade{animation: fade .38s var(--a) both}
+    @keyframes fade{from{opacity:0; transform: translateY(8px)} to{opacity:1; transform: translateY(0)}}
+  </style>
+</head>
+
+<body>
+  <div class="glitter" aria-hidden="true"></div>
+  <div class="petals" aria-hidden="true" id="petals"></div>
+
+  <header>
+    <div class="bar">
+      <div class="brand">
+        <div class="mark" aria-hidden="true"></div>
+        <div>
+          <h1 class="t1">Bibliothèque Yasmin</h1>
+          <p class="t2" data-i18n="subtitle">قصص PDF وردية — من أجل ياسمين 🌸💗</p>
+        </div>
+      </div>
+
+      <div class="headerRight">
+        <span class="miniBadge rose" data-i18n="badgeRose">🌸 Rose</span>
+        <span class="miniBadge" data-i18n="badgeCount">📚 4 قصص PDF</span>
+        <span class="miniBadge" data-i18n="badgeDesign">✨ تصميم بناتي</span>
+
+        <!-- Favorites filter -->
+        <button class="toolBtn" id="favFilterBtn" type="button" title="Favoris">💗 <span data-i18n="favFilter">المفضلة</span></button>
+
+        <!-- Theme: AUTO by time (button toggles manual override) -->
+        <button class="toolBtn" id="themeBtn" type="button" title="Theme">🕒 <span data-i18n="themeAuto">أوتوماتيك</span></button>
+
+        <!-- Language switch -->
+        <div class="langWrap" aria-label="Language">
+          <button class="langBtn active" data-lang="ar" type="button">AR</button>
+          <button class="langBtn" data-lang="es" type="button">ES</button>
+          <button class="langBtn" data-lang="fr" type="button">FR</button>
+        </div>
+
+        <!-- Photo -->
+        <img class="topPhoto" src="yasmin.jpeg" alt="Yasmin" onerror="this.style.display='none';" />
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero fade">
+      <div class="heroGrid">
+        <div>
+          <h2 class="heroTitle" data-i18n="heroTitle">مرحبا ياسمين 💗 <span>هنا مكتبتك</span></h2>
+          <p class="heroSub" data-i18n="heroSub">
+            هاد الموقع معمول باش ياسمين تقرا القصص ديالها بسهولة 🌸
+            اختاري القصة، وطيّحي فـ عالم وردي… وغادي يتحلّ PDF داخل الموقع بطريقة مريحة للعين.
+          </p>
+
+          <div class="searchRow">
+            <div class="searchBox">
+              <span>🔎</span>
+              <input id="search" type="text" data-i18n-placeholder="searchPh" placeholder="قلّبي على عنوان..." autocomplete="off"/>
+            </div>
+            <button class="toolBtn" id="randomBtn" type="button">🎀 <span data-i18n="random">عشوائي</span></button>
+            <button class="toolBtn" id="continueBtn" type="button" style="display:none;">▶️ <span data-i18n="continue">كمّلي</span></button>
+          </div>
+
+          <div class="quoteBox">
+            <div id="quoteText">💗 ياسمين… خلي الورد يضحك فـ قلبك 🌸</div>
+            <button id="newQuote" type="button">✨ <span data-i18n="newQuote">رسالة</span></button>
+          </div>
+        </div>
+
+        <div class="yasminCard">
+          <div class="yasTop">
+            <div class="avatar" aria-hidden="true"></div>
+            <div class="yasText">
+              <p class="yasName">Yasmin 🌸</p>
+              <p class="yasBio" data-i18n="yasBio">كتحب الورد، الألوان الوردية، والقصص اللي فيهم إحساس 💗</p>
+            </div>
+          </div>
+          <div class="yasLine" data-i18n="yasLine1">✨ تذكير لطيف: ياسمين ديما كتستاهل السعادة والراحة 💗🌸</div>
+          <div class="yasLine" data-i18n="yasLine2">📖 اختاري قصة من لتحت… وغادي يتحلّ PDF داخل الموقع 🌸</div>
+          <div class="yasLine" id="statsLine">⭐ 4 • 💗 0</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid" id="grid">
+      <!-- Card 1 -->
+      <article class="card fade" data-id="s1">
+        <div class="cardInner">
+          <div class="imgBox">
+            <img src="تاب الوحش الذي يسكنك يمكن ان يكون لطيفا .webp" alt="image 1"
+                 onerror="this.remove(); this.parentElement.querySelector('.imgPh').style.display='grid';">
+            <div class="imgPh" style="display:none">
+              <div><b>بلاصة الصورة 🌸</b><br/>حط الصورة فـ نفس الدوسي</div>
+            </div>
+          </div>
+
+          <div class="info">
+            <input class="titleInput storyTitle" data-i18n-placeholder="title1Ph" placeholder="كتاب الوحش الذي يسكنك يمكن ان يكون لطيفا" />
+            <p class="desc" data-i18n="desc1">🌷 قصة PDF رقم 1</p>
+
+            <div class="actions">
+              <button class="btn openPdf" type="button"
+                      data-pdfraw="كتاب الوحش الذي يسكنك يمكن ان يكون لطيفا .pdf"
+                      data-i18n="readPdf">📖 <span>قراءة مريحة</span></button>
+
+              <a class="btn2 dlLink" data-pdfraw="كتاب الوحش الذي يسكنك يمكن ان يكون لطيفا .pdf" href="#" download data-i18n="download">⬇️ تحميل</a>
+
+              <button class="heartBtn favBtn" type="button">💗 <span data-i18n="fav">مفضلة</span></button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 2 -->
+      <article class="card fade" data-id="s2">
+        <div class="cardInner">
+          <div class="imgBox">
+            <img src="واية لعنة أديمون.webp" alt="image 2"
+                 onerror="this.remove(); this.parentElement.querySelector('.imgPh').style.display='grid';">
+            <div class="imgPh" style="display:none">
+              <div><b>بلاصة الصورة 🌸</b><br/>حط الصورة فـ نفس الدوسي</div>
+            </div>
+          </div>
+
+          <div class="info">
+            <input class="titleInput storyTitle" data-i18n-placeholder="title2Ph" placeholder="رواية لعنة أديمون" />
+            <p class="desc" data-i18n="desc2">💗 قصة PDF رقم 2</p>
+
+            <div class="actions">
+              <button class="btn openPdf" type="button"
+                      data-pdfraw="رواية لعنة أديمون – إيمان الناضفي.pdf"
+                      data-i18n="readPdf">📖 <span>قراءة مريحة</span></button>
+
+              <a class="btn2 dlLink" data-pdfraw="رواية لعنة أديمون – إيمان الناضفي.pdf" href="#" download data-i18n="download">⬇️ تحميل</a>
+
+              <button class="heartBtn favBtn" type="button">💗 <span data-i18n="fav">مفضلة</span></button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 3 -->
+      <article class="card fade" data-id="s3">
+        <div class="cardInner">
+          <div class="imgBox">
+            <img src="مرأة بطعم التوت.webp" alt="image 3"
+                 onerror="this.remove(); this.parentElement.querySelector('.imgPh').style.display='grid';">
+            <div class="imgPh" style="display:none">
+              <div><b>بلاصة الصورة 🌸</b><br/>حط الصورة فـ نفس الدوسي</div>
+            </div>
+          </div>
+
+          <div class="info">
+            <input class="titleInput storyTitle" data-i18n-placeholder="title3Ph" placeholder="امرأة بطعم التوت" />
+            <p class="desc" data-i18n="desc3">✨ قصة PDF رقم 3</p>
+
+            <div class="actions">
+              <button class="btn openPdf" type="button"
+                      data-pdfraw="امرأة_بطعم_التوت.pdf"
+                      data-i18n="readPdf">📖 <span>قراءة مريحة</span></button>
+
+              <a class="btn2 dlLink" data-pdfraw="امرأة_بطعم_التوت.pdf" href="#" download data-i18n="download">⬇️ تحميل</a>
+
+              <button class="heartBtn favBtn" type="button">💗 <span data-i18n="fav">مفضلة</span></button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 4 -->
+      <article class="card fade" data-id="s4">
+        <div class="cardInner">
+          <div class="imgBox">
+            <img src="تحميل-رواية-فندق-المقبرة-PDF-مبارك-العريفان.jpg" alt="image 4"
+                 onerror="this.remove(); this.parentElement.querySelector('.imgPh').style.display='grid';">
+            <div class="imgPh" style="display:none">
+              <div><b>بلاصة الصورة 🌸</b><br/>حط الصورة فـ نفس الدوسي</div>
+            </div>
+          </div>
+
+          <div class="info">
+            <input class="titleInput storyTitle" data-i18n-placeholder="title4Ph" placeholder="فندق المقبرة" />
+            <p class="desc" data-i18n="desc4">🌙 قصة PDF رقم 4</p>
+
+            <div class="actions">
+              <button class="btn openPdf" type="button"
+                      data-pdfraw="رواية فندق المقبرة PDF - مبارك العريفان.pdf"
+                      data-i18n="readPdf">📖 <span>قراءة مريحة</span></button>
+
+              <a class="btn2 dlLink" data-pdfraw="رواية فندق المقبرة PDF - مبارك العريفان.pdf" href="#" download data-i18n="download">⬇️ تحميل</a>
+
+              <button class="heartBtn favBtn" type="button">💗 <span data-i18n="fav">مفضلة</span></button>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <div class="empty" id="empty" data-i18n="empty">ما لقيت حتى قصة… 🌸</div>
+
+  </main>
+
+  <!-- ===== Modal (Reading Mode) ===== -->
+  <div class="back" id="back" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modalHead">
+        <div class="mTitle" id="mTitle">—</div>
+        <div class="modalActions">
+          <button class="mBtn" id="mFull" type="button">⛶ Full</button>
+          <button class="mBtn heart" id="mFav" type="button" title="Fav">♡</button>
+          <button class="mBtn" id="mDownload" type="button">⬇️ <span data-i18n="download">تحميل</span></button>
+          <button class="mBtn" id="mClose" type="button">✕ <span data-i18n="close">إغلاق</span></button>
+        </div>
+      </div>
+
+      <div class="modalBody">
+        <div class="pdfFrame">
+          <iframe id="pdf" title="PDF"></iframe>
+        </div>
+
+        <div class="sidePanel">
+          <h3 data-i18n="notesTitle">📝 ملاحظات ياسمين</h3>
+          <textarea id="notes" class="notes" data-i18n-placeholder="notesPh" placeholder="كتبي هنا شنو حسّيتي…"></textarea>
+          <div class="tiny" id="mInfo">—</div>
+          <div class="tiny" style="margin-top:10px;" data-i18n="eyeTip">👁️ نصيحة: إلا كانت العين تعبات، خلي الضوء خفيف وخدي بريك.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== petals generator =====
+    (function makePetals(){
+      const host = document.getElementById("petals");
+      const count = 24;
+      for(let i=0;i<count;i++){
+        const p = document.createElement("div");
+        p.className = "petal";
+        const left = Math.random()*100;
+        const delay = Math.random()*-12;
+        const dur = 10 + Math.random()*14;
+        const size = 10 + Math.random()*16;
+
+        p.style.left = left + "vw";
+        p.style.top = (-10 - Math.random()*40) + "vh";
+        p.style.width = (size*0.8) + "px";
+        p.style.height = (size*1.15) + "px";
+        p.style.opacity = (0.35 + Math.random()*0.55).toFixed(2);
+        p.style.animationDuration = dur + "s";
+        p.style.animationDelay = delay + "s";
+        p.style.setProperty("--x", (Math.random()*60 - 30) + "px");
+        host.appendChild(p);
+      }
+    })();
+
+    // ===== i18n =====
+    const I18N = {
+      ar: {
+        subtitle: "قصص PDF وردية — من أجل ياسمين 🌸💗",
+        badgeRose: "🌸 Rose",
+        badgeCount: "📚 4 قصص PDF",
+        badgeDesign: "✨ تصميم بناتي",
+        heroTitle: "مرحبا ياسمين 💗 <span>هنا مكتبتك</span>",
+        heroSub: "هاد الموقع معمول باش ياسمين تقرا القصص ديالها بسهولة 🌸 اختاري القصة… وغادي يتحلّ PDF داخل الموقع بطريقة مريحة للعين.",
+        yasBio: "كتحب الورد، الألوان الوردية، والقصص اللي فيهم إحساس 💗",
+        yasLine1: "✨ تذكير لطيف: ياسمين ديما كتستاهل السعادة والراحة 💗🌸",
+        yasLine2: "📖 اختاري قصة من لتحت… وغادي يتحلّ PDF داخل الموقع 🌸",
+        title1Ph: "كتاب الوحش الذي يسكنك يمكن ان يكون لطيفا",
+        title2Ph: "رواية لعنة أديمون",
+        title3Ph: "امرأة بطعم التوت",
+        title4Ph: "فندق المقبرة",
+        desc1: "🌷 قصة PDF رقم 1",
+        desc2: "💗 قصة PDF رقم 2",
+        desc3: "✨ قصة PDF رقم 3",
+        desc4: "🌙 قصة PDF رقم 4",
+        readPdf: "📖 قراءة مريحة",
+        download: "⬇️ تحميل",
+        fav: "مفضلة",
+        favFilter: "المفضلة",
+        themeAuto: "أوتوماتيك",
+        themeManual: "يدوي",
+        searchPh: "قلّبي على عنوان...",
+        random: "عشوائي",
+        continue: "كمّلي",
+        newQuote: "رسالة",
+        empty: "ما لقيت حتى قصة بهاد البحث/الفلتر… 🌸",
+        note: "✅ خليك كتحط PDF والصور فـ نفس الدوسي (وخلي الاسم نفسو حرف بحرف).<br/>ملاحظة: فـ Netlify الأحرف/الكابيتال مهمين (case-sensitive).",
+        close: "إغلاق",
+        notesTitle: "📝 ملاحظات ياسمين",
+        notesPh: "كتبي هنا شنو حسّيتي…",
+        eyeTip: "👁️ نصيحة: إلا كانت العين تعبات، خلي الضوء خفيف وخدي بريك."
+      },
+      es: {
+        subtitle: "Historias PDF rosas — para Yasmin 🌸💗",
+        badgeRose: "🌸 Rosa",
+        badgeCount: "📚 4 historias PDF",
+        badgeDesign: "✨ Diseño femenino",
+        heroTitle: "Hola Yasmin 💗 <span>esta es tu biblioteca</span>",
+        heroSub: "Este sitio es para que Yasmin lea historias fácilmente 🌸 Elige una historia… y el PDF se abrirá aquí, de forma cómoda para la vista.",
+        yasBio: "Le encantan las rosas, el color rosa y las historias con sentimiento 💗",
+        yasLine1: "✨ Recordatorio: Yasmin merece siempre felicidad y calma 💗🌸",
+        yasLine2: "📖 Elige una historia abajo… y se abrirá aquí 🌸",
+        title1Ph: "El monstruo que vive en ti puede ser amable",
+        title2Ph: "La maldición de Adimon",
+        title3Ph: "Una mujer con sabor a mora",
+        title4Ph: "El hotel del cementerio",
+        desc1: "🌷 Historia PDF #1",
+        desc2: "💗 Historia PDF #2",
+        desc3: "✨ Historia PDF #3",
+        desc4: "🌙 Historia PDF #4",
+        readPdf: "📖 Lectura cómoda",
+        download: "⬇️ Descargar",
+        fav: "Favorito",
+        favFilter: "Favoritos",
+        themeAuto: "Auto",
+        themeManual: "Manual",
+        searchPh: "Buscar un título...",
+        random: "Aleatorio",
+        continue: "Continuar",
+        newQuote: "Mensaje",
+        empty: "No se encontró ninguna historia… 🌸",
+        note: "✅ Pon los PDFs y las imágenes en la misma carpeta (mismo nombre exacto).<br/>Nota: en Netlify importan las mayúsculas (case-sensitive).",
+        close: "Cerrar",
+        notesTitle: "📝 Notas de Yasmin",
+        notesPh: "Escribe aquí lo que sentiste…",
+        eyeTip: "👁️ Consejo: si te cansa la vista, baja el brillo y descansa."
+      },
+      fr: {
+        subtitle: "Histoires PDF roses — pour Yasmin 🌸💗",
+        badgeRose: "🌸 Rose",
+        badgeCount: "📚 4 PDFs",
+        badgeDesign: "✨ Design girly",
+        heroTitle: "Salut Yasmin 💗 <span>ta bibliothèque</span>",
+        heroSub: "Ce site est fait pour lire facilement 🌸 Choisis une histoire… et le PDF s’ouvre ici, confort visuel.",
+        yasBio: "Elle aime les roses, la couleur rose, et les histoires pleines d’émotion 💗",
+        yasLine1: "✨ Petit rappel : Yasmin mérite toujours le bonheur et la paix 💗🌸",
+        yasLine2: "📖 Choisis une histoire en bas… et ça s’ouvre ici 🌸",
+        title1Ph: "Le monstre qui vit en toi peut être gentil",
+        title2Ph: "La malédiction d’Adimon",
+        title3Ph: "Une femme au goût de mûre",
+        title4Ph: "L’hôtel du cimetière",
+        desc1: "🌷 Histoire PDF #1",
+        desc2: "💗 Histoire PDF #2",
+        desc3: "✨ Histoire PDF #3",
+        desc4: "🌙 Histoire PDF #4",
+        readPdf: "📖 Lecture confortable",
+        download: "⬇️ Télécharger",
+        fav: "Favori",
+        favFilter: "Favoris",
+        themeAuto: "Auto",
+        themeManual: "Manuel",
+        searchPh: "Rechercher un titre...",
+        random: "Aléatoire",
+        continue: "Continuer",
+        newQuote: "Message",
+        empty: "Aucune histoire trouvée… 🌸",
+        note: "✅ Mets les PDFs et les images dans le même dossier (même nom exact).<br/>Note : sur Netlify, la casse compte (case-sensitive).",
+        close: "Fermer",
+        notesTitle: "📝 Notes de Yasmin",
+        notesPh: "Écris ici ce que tu as ressenti…",
+        eyeTip: "👁️ Astuce : si tes yeux fatiguent, baisse la luminosité et repose-toi."
+      }
+    };
+
+    let currentLang = "ar";
+
+    function setLang(lang){
+      currentLang = lang;
+      const dict = I18N[lang] || I18N.ar;
+
+      const html = document.documentElement;
+      html.lang = lang === "ar" ? "ar" : (lang === "es" ? "es" : "fr");
+      html.dir = (lang === "ar") ? "rtl" : "ltr";
+
+      document.querySelectorAll(".langBtn").forEach(b=>{
+        b.classList.toggle("active", b.dataset.lang === lang);
+      });
+
+      document.querySelectorAll("[data-i18n]").forEach(node=>{
+        const key = node.getAttribute("data-i18n");
+        if(dict[key] != null) node.innerHTML = dict[key];
+      });
+
+      document.querySelectorAll("[data-i18n-placeholder]").forEach(inp=>{
+        const key = inp.getAttribute("data-i18n-placeholder");
+        if(dict[key] != null) inp.setAttribute("placeholder", dict[key]);
+      });
+
+      document.body.style.textAlign = (lang === "ar") ? "right" : "left";
+
+      restoreTitles();
+      updateStats();
+      applyFilters();
+      updateDownloadLinks();
+      updateThemeButtonLabel();
+    }
+
+    // ===== Storage keys =====
+    const LS_FAV = "yasmin:favs";
+    const LS_THEME_PREF = "yasmin:themePref"; // "auto" | "light" | "dark"
+    const LS_TITLES = "yasmin:titles";
+    const LS_NOTES = "yasmin:notes";
+    const LS_LAST = "yasmin:last";
+
+    // ===== Favorites =====
+    const favSet = new Set(JSON.parse(localStorage.getItem(LS_FAV) || "[]"));
+    let onlyFav = false;
+
+    function saveFavs(){
+      localStorage.setItem(LS_FAV, JSON.stringify([...favSet]));
+      updateStats();
+      applyFilters();
+    }
+    function toggleFav(id){
+      if(favSet.has(id)) favSet.delete(id);
+      else favSet.add(id);
+      saveFavs();
+      syncFavUI();
+    }
+    function syncFavUI(){
+      document.querySelectorAll(".card").forEach(card=>{
+        const id = card.dataset.id;
+        const btn = card.querySelector(".favBtn");
+        if(btn){
+          btn.classList.toggle("active", favSet.has(id));
+          btn.innerHTML = (favSet.has(id) ? "💗" : "♡") + " <span data-i18n='fav'>" + (I18N[currentLang].fav||"مفضلة") + "</span>";
+        }
+      });
+      const mFav = document.getElementById("mFav");
+      if(mFav && mFav.dataset.currentId){
+        mFav.classList.toggle("active", favSet.has(mFav.dataset.currentId));
+        mFav.textContent = favSet.has(mFav.dataset.currentId) ? "💗" : "♡";
+      }
+    }
+
+    // ===== Search + Filter =====
+    const searchInput = document.getElementById("search");
+    searchInput.addEventListener("input", applyFilters);
+
+    function applyFilters(){
+      const q = (searchInput.value || "").trim().toLowerCase();
+      let shown = 0;
+
+      document.querySelectorAll(".card").forEach(card=>{
+        const id = card.dataset.id;
+        const titleInp = card.querySelector(".storyTitle");
+        const title = (titleInp?.value || titleInp?.getAttribute("placeholder") || "").toLowerCase();
+
+        const matchQ = q ? title.includes(q) : true;
+        const matchFav = onlyFav ? favSet.has(id) : true;
+
+        const ok = matchQ && matchFav;
+        card.style.display = ok ? "" : "none";
+        if(ok) shown++;
+      });
+
+      document.getElementById("empty").style.display = shown ? "none" : "block";
+      syncFavUI();
+    }
+
+    // ===== Titles persist =====
+    function getTitlesObj(){
+      try { return JSON.parse(localStorage.getItem(LS_TITLES) || "{}"); }
+      catch { return {}; }
+    }
+    function setTitleFor(id, lang, val){
+      const obj = getTitlesObj();
+      obj[id] = obj[id] || {};
+      obj[id][lang] = val;
+      localStorage.setItem(LS_TITLES, JSON.stringify(obj));
+    }
+    function restoreTitles(){
+      const obj = getTitlesObj();
+      document.querySelectorAll(".card").forEach(card=>{
+        const id = card.dataset.id;
+        const inp = card.querySelector(".storyTitle");
+        if(!inp) return;
+        const saved = obj[id]?.[currentLang];
+        if(typeof saved === "string" && saved.trim()){
+          inp.value = saved;
+        }
+      });
+    }
+    document.querySelectorAll(".storyTitle").forEach(inp=>{
+      const card = inp.closest(".card");
+      const id = card?.dataset.id;
+      inp.addEventListener("input", ()=>{
+        setTitleFor(id, currentLang, inp.value);
+        applyFilters();
+      });
+    });
+
+    // ===== AUTO theme by time (morning/day => light, evening/night => dark) =====
+    function preferredAutoTheme(){
+      const h = new Date().getHours();
+      // Light from 7:00 to 17:59 (sba7 + nhar), Dark from 18:00 to 6:59 (l3chiya + lil)
+      return (h >= 7 && h < 18) ? "light" : "dark";
+    }
+
+    function applyTheme(theme){
+      document.body.classList.toggle("light", theme === "light");
+    }
+
+    function getThemePref(){
+      return localStorage.getItem(LS_THEME_PREF) || "auto"; // default auto
+    }
+
+    function setThemePref(pref){
+      localStorage.setItem(LS_THEME_PREF, pref);
+      syncThemeFromPref();
+    }
+
+    function syncThemeFromPref(){
+      const pref = getThemePref();
+      if(pref === "auto"){
+        applyTheme(preferredAutoTheme());
+      } else {
+        applyTheme(pref); // light/dark
+      }
+      updateThemeButtonLabel();
+    }
+
+    function updateThemeButtonLabel(){
+      const btn = document.getElementById("themeBtn");
+      const pref = getThemePref();
+      const dict = I18N[currentLang] || I18N.ar;
+
+      if(pref === "auto"){
+        const now = preferredAutoTheme();
+        btn.innerHTML = "🕒 <span data-i18n='themeAuto'>" + (dict.themeAuto || "أوتوماتيك") + "</span> • " + (now === "light" ? "☀️" : "🌙");
+        btn.classList.remove("active");
+      } else {
+        btn.innerHTML = (pref === "light" ? "☀️ " : "🌙 ") + "<span data-i18n='themeManual'>" + (dict.themeManual || "يدوي") + "</span>";
+        btn.classList.add("active");
+      }
+    }
+
+    // button cycles: auto -> light -> dark -> auto
+    document.getElementById("themeBtn").addEventListener("click", ()=>{
+      const pref = getThemePref();
+      if(pref === "auto") setThemePref("light");
+      else if(pref === "light") setThemePref("dark");
+      else setThemePref("auto");
+    });
+
+    // keep auto theme fresh (every 5 minutes) if pref auto
+    setInterval(()=>{
+      if(getThemePref() === "auto") syncThemeFromPref();
+    }, 5*60*1000);
+
+    // ===== Quotes =====
+    const QUOTES = [
+      "💗 ياسمين… خلي الورد يضحك فـ قلبك 🌸",
+      "✨ ياسمين راكي قوية… وكتستاهلي كلشي زوين 💗",
+      "🌷 خدي نفس عميق… وعيشي القصة بحال حلم وردي 🌸",
+      "🎀 ياسمين… حتى نهار صعيب كيدوز… والفرحة كترجع 💗",
+      "💞 كنتمناو لياسمين أيام خفاف وابتسامة ديما حاضرة 🌸"
+    ];
+    function newQuote(){
+      document.getElementById("quoteText").textContent = QUOTES[Math.floor(Math.random()*QUOTES.length)];
+    }
+    document.getElementById("newQuote").addEventListener("click", newQuote);
+
+    
+    // ===== PDF Reader Modal + Notes + Last read =====
+    const mFull = document.getElementById("mFull");
+    mFull?.addEventListener("click", ()=>{
+      const modal = document.querySelector(".modal");
+      modal.requestFullscreen?.();
+    });
+    
+    const back = document.getElementById("back");
+    const pdf = document.getElementById("pdf");
+    const mTitle = document.getElementById("mTitle");
+    const mInfo = document.getElementById("mInfo");
+    const notes = document.getElementById("notes");
+    const mFav = document.getElementById("mFav");
+    const mDownload = document.getElementById("mDownload");
+
+    function getNotesObj(){
+      try { return JSON.parse(localStorage.getItem(LS_NOTES) || "{}"); }
+      catch { return {}; }
+    }
+    function setNote(id, val){
+      const obj = getNotesObj();
+      obj[id] = val;
+      localStorage.setItem(LS_NOTES, JSON.stringify(obj));
+    }
+    function getNote(id){
+      const obj = getNotesObj();
+      return obj[id] || "";
+    }
+
+    function openModal(storyId, titleText, pdfRaw){
+      const pdfUrl = encodeURI(pdfRaw);
+      localStorage.setItem(LS_LAST, storyId);
+
+      // reading comfort
+      document.body.classList.add("reading");
+
+      mTitle.textContent = titleText || "—";
+      // Eye-friendly: hide toolbar if supported by browser pdf viewer
+      pdf.src = pdfUrl + "#toolbar=0&navpanes=0&scrollbar=1";
+
+      back.style.display = "flex";
+      back.setAttribute("aria-hidden","false");
+
+      mFav.dataset.currentId = storyId;
+      mFav.classList.toggle("active", favSet.has(storyId));
+      mFav.textContent = favSet.has(storyId) ? "💗" : "♡";
+
+      notes.value = getNote(storyId);
+      mInfo.textContent = "ID: " + storyId + " • " + new Date().toLocaleString();
+
+      mDownload.onclick = ()=>{
+        const a = document.createElement("a");
+        a.href = pdfUrl;
+        a.download = "";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      };
+
+      // show continue button
+      updateContinueButton();
+
+      updateStats();
+    }
+
+    function closeModal(){
+      back.style.display = "none";
+      back.setAttribute("aria-hidden","true");
+      pdf.src = "about:blank";
+      mFav.dataset.currentId = "";
+      document.body.classList.remove("reading");
+    }
+
+    document.getElementById("mClose").addEventListener("click", closeModal);
+    back.addEventListener("click", (e)=>{ if(e.target === back) closeModal(); });
+    document.addEventListener("keydown", (e)=>{ if(e.key === "Escape") closeModal(); });
+
+    notes.addEventListener("input", ()=>{
+      const id = mFav.dataset.currentId;
+      if(id) setNote(id, notes.value);
+    });
+
+    mFav.addEventListener("click", ()=>{
+      const id = mFav.dataset.currentId;
+      if(id) toggleFav(id);
+      syncFavUI();
+    });
+
+    document.querySelectorAll(".openPdf").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const card = btn.closest(".card");
+        const id = card.dataset.id;
+        const inp = card.querySelector(".storyTitle");
+        const title = (inp?.value || inp?.getAttribute("placeholder") || "").trim() || "—";
+        const pdfRaw = btn.getAttribute("data-pdfraw");
+        openModal(id, title, pdfRaw);
+      });
+    });
+
+    function updateDownloadLinks(){
+      document.querySelectorAll(".dlLink").forEach(a=>{
+        const raw = a.getAttribute("data-pdfraw");
+        a.href = encodeURI(raw || "#");
+      });
+    }
+
+    document.querySelectorAll(".favBtn").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const card = btn.closest(".card");
+        toggleFav(card.dataset.id);
+      });
+    });
+
+    const favFilterBtn = document.getElementById("favFilterBtn");
+    favFilterBtn.addEventListener("click", ()=>{
+      onlyFav = !onlyFav;
+      favFilterBtn.classList.toggle("active", onlyFav);
+      applyFilters();
+    });
+
+    document.getElementById("randomBtn").addEventListener("click", ()=>{
+      const cards = [...document.querySelectorAll(".card")].filter(c=>c.style.display !== "none");
+      if(!cards.length) return;
+      const pick = cards[Math.floor(Math.random()*cards.length)];
+      pick.querySelector(".openPdf")?.click();
+    });
+
+    function updateStats(){
+      const total = document.querySelectorAll(".card").length;
+      const fav = favSet.size;
+      const last = localStorage.getItem(LS_LAST) || "—";
+      document.getElementById("statsLine").textContent = "⭐ " + total + " • 💗 " + fav + " • " + (currentLang==="ar" ? ("آخر قراءة: "+last) : ("Last: "+last));
+    }
+
+    // Continue last read (nice UX)
+    function updateContinueButton(){
+      const last = localStorage.getItem(LS_LAST);
+      const btn = document.getElementById("continueBtn");
+      btn.style.display = last ? "inline-flex" : "none";
+    }
+    document.getElementById("continueBtn").addEventListener("click", ()=>{
+      const last = localStorage.getItem(LS_LAST);
+      if(!last) return;
+      const card = document.querySelector(".card[data-id='"+last+"']");
+      const open = card?.querySelector(".openPdf");
+      open?.click();
+    });
+
+    // Language buttons
+    document.querySelectorAll(".langBtn").forEach(btn=>{
+      btn.addEventListener("click", ()=>setLang(btn.dataset.lang));
+    });
+
+    // Init
+    (function init(){
+      // theme pref (auto by default)
+      if(!localStorage.getItem(LS_THEME_PREF)){
+        localStorage.setItem(LS_THEME_PREF, "auto");
+      }
+      syncThemeFromPref();
+
+      setLang("ar");
+      newQuote();
+
+      syncFavUI();
+      restoreTitles();
+      updateDownloadLinks();
+      updateStats();
+      applyFilters();
+      updateContinueButton();
+    })();
+  </script>
+</body>
+</html>
